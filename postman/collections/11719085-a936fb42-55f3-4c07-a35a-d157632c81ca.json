@@ -1,0 +1,2597 @@
+{
+	"info": {
+		"_postman_id": "11719085-a936fb42-55f3-4c07-a35a-d157632c81ca",
+		"name": "Admin user",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "preconditions",
+			"item": [
+				{
+					"name": "login as admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "009f278f-be69-4882-8926-b09215664231",
+								"exec": [
+									"pm.test(\"Status code is 200\", ()=>{\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"Admin successufully logged in\", ()=>{\r",
+									"    let responseText = pm.response.text().toLowerCase()\r",
+									"    pm.expect(responseText).\r",
+									"        to.include(\"welcome, \" + pm.environment.get(\"admin_user\").toLowerCase() + \"!\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"pm.test(\"navbar items\", ()=>{\r",
+									"    pm.expect(pm.response.text()).to.include(\"/Projects\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"/UsersManagement\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"/logout\");\r",
+									"    pm.expect(pm.response.text()).to.include(\"/TestSpecification\");\r",
+									"});\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									"\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"id": "11719085-a0d4b830-332e-4416-ba76-029064c63c37",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "username",
+									"value": "{{admin_user}}",
+									"type": "text",
+									"uuid": "84511e65-667c-4fab-9eb4-0b47136b5fa9"
+								},
+								{
+									"key": "password",
+									"value": "{{admin_password}}",
+									"type": "text",
+									"uuid": "6bde7e42-66a5-43ba-add9-e17ca1e5b052"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{host}}login",
+							"host": [
+								"{{host}}login"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"id": "11719085-60eb9539-594b-4193-8da4-f28ca22e1b58"
+		},
+		{
+			"name": "Projects",
+			"item": [
+				{
+					"name": "New project",
+					"item": [
+						{
+							"name": "Create project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the projects page\", ()=>{\r",
+											"    let responseText = pm.response.text().toLowerCase()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"project management system\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"let newProjectfound = false;\r",
+											"$('select#project-selector-form option').each((index, element) => {\r",
+											"    \r",
+											"    const projectId = $(element).attr('value');\r",
+											"    const selected = $(element).attr('selected');\r",
+											"    const projectName = $(element).text().trim();\r",
+											"\r",
+											"\r",
+											"\r",
+											"    if (projectName=='test project'){\r",
+											"        newProjectfound = true; \r",
+											"\r",
+											"        pm.environment.set(\"new_project_id\", projectId);\r",
+											"\r",
+											"        pm.test(\"New project must be selected in the dropdown list\", ()=>{\r",
+											"            pm.expect(selected).to.equal(\"selected\");\r",
+											"        })\r",
+											"\r",
+											"        return false;\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Verification: new test option was found in the HTML\", () => {\r",
+											"    pm.expect(newProjectfound).to.equal(true);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-8ec6c545-005c-4564-8694-687c0a18993c",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "project_name",
+											"value": "test project",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "start_date",
+											"value": "2025-11-10",
+											"type": "text",
+											"uuid": "53eab198-b9bb-46a1-9d49-3b2ad21ea97a"
+										},
+										{
+											"key": "end_date",
+											"value": "2025-12-10",
+											"type": "text",
+											"uuid": "4cc85651-21a1-4a8e-95f6-daa172742cd6"
+										},
+										{
+											"key": "description",
+											"value": "Validate if creating a projectr is possible",
+											"type": "text",
+											"uuid": "72ced28d-26ab-47df-a582-5d89a973506e"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}AddProject",
+									"host": [
+										"{{host}}AddProject"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Open project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"    //the code automaticaly reads the projects to update the dropdpwn, hence the 200 code\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the open project page\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    pm.expect(responseText).to.include(\"Project Information\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Check project info\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"test project\");\r",
+											"    pm.expect(responseText).to.include(\"2025-11-10\");\r",
+											"    pm.expect(responseText).to.include(\"2025-12-10\");\r",
+											"    pm.expect(responseText).to.include(\"Validate if creating a projectr is possible\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-a53ee80a-eec2-4187-b424-7e09b3beaeb8",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{host}}OpenProject/{{new_project_id}}",
+									"host": [
+										"{{host}}OpenProject"
+									],
+									"path": [
+										"{{new_project_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "SelectProject",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d43a5410-dd49-4a86-ae1f-186e1a765cb8",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "369e4137-8cf0-43c1-829a-62ebe5d8cf57",
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-c6221c2d-8a86-4847-bf4b-cecd76a6766c",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"project_id\": {{new_project_id}}\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}SelectProject",
+									"host": [
+										"{{host}}SelectProject"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"    //the code automaticaly reads the projects to update the dropdpwn, hence the 200 code\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the project page\", ()=>{\r",
+											"    let responseText = pm.response.text().toLowerCase()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"project management system\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"let projectDeleted = true;\r",
+											"$('select#project-selector-form option').each((index, element) => {\r",
+											"    const projectName = $(element).text().trim();\r",
+											"\r",
+											"    if (projectName=='test project'){\r",
+											"        projectDeleted = false; \r",
+											"        return false;\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Verification: if the project was deleted\", () => {\r",
+											"    pm.expect(projectDeleted).to.equal(true);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-adfdbb32-cba2-42bb-a063-e1922462582b",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "id",
+											"value": "{{new_project_id}}",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "action",
+											"value": "deletion",
+											"type": "text",
+											"uuid": "53eab198-b9bb-46a1-9d49-3b2ad21ea97a"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}Projects",
+									"host": [
+										"{{host}}Projects"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"id": "11719085-f9749c03-a948-4683-9e53-bd53813323cb"
+				},
+				{
+					"name": "Try duplicate project name",
+					"item": [
+						{
+							"name": "Create project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"    //the code automaticaly reads the projects to update the dropdpwn, hence the 200 code\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the projects page\", ()=>{\r",
+											"    let responseText = pm.response.text().toLowerCase()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"project management system\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"let newProjectfound = false;\r",
+											"$('select#project-selector-form option').each((index, element) => {\r",
+											"    \r",
+											"    const projectId = $(element).attr('value');\r",
+											"    const selected = $(element).attr('selected');\r",
+											"    const projectName = $(element).text().trim();\r",
+											"\r",
+											"\r",
+											"\r",
+											"    if (projectName=='test project'){\r",
+											"        newProjectfound = true; \r",
+											"\r",
+											"        pm.environment.set(\"new_project_id\", projectId);\r",
+											"\r",
+											"        pm.test(\"New project must be selected in the dropdown list\", ()=>{\r",
+											"            pm.expect(selected).to.equal(\"selected\");\r",
+											"        })\r",
+											"\r",
+											"        return false;\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"if (!newProjectfound){\r",
+											"    pm.test(\"Verification: new test option was found in the HTML\", () => {\r",
+											"        pm.expect(testProjectFound).to.equal(true);\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-13930736-54d9-488d-b2c4-6e936c44c7a5",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "project_name",
+											"value": "test project",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "start_date",
+											"value": "2025-11-10",
+											"type": "text",
+											"uuid": "53eab198-b9bb-46a1-9d49-3b2ad21ea97a"
+										},
+										{
+											"key": "end_date",
+											"value": "2025-12-10",
+											"type": "text",
+											"uuid": "4cc85651-21a1-4a8e-95f6-daa172742cd6"
+										},
+										{
+											"key": "description",
+											"value": "Validate if creating a projectr is possible",
+											"type": "text",
+											"uuid": "72ced28d-26ab-47df-a582-5d89a973506e"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}AddProject",
+									"host": [
+										"{{host}}AddProject"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Create project same name",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 409\", ()=>{\r",
+											"    pm.response.to.have.status(409);\r",
+											"\r",
+											"    //the code automaticaly reads the projects to update the dropdpwn, hence the 200 code\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the projects page\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"The project name must be unique!\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-4294034e-2511-441b-b972-00fe8a2d4943",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "project_name",
+											"value": "test project",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "start_date",
+											"value": "2025-11-10",
+											"type": "text",
+											"uuid": "53eab198-b9bb-46a1-9d49-3b2ad21ea97a"
+										},
+										{
+											"key": "end_date",
+											"value": "2025-12-10",
+											"type": "text",
+											"uuid": "4cc85651-21a1-4a8e-95f6-daa172742cd6"
+										},
+										{
+											"key": "description",
+											"value": "Validate if creating a projectr is possible",
+											"type": "text",
+											"uuid": "72ced28d-26ab-47df-a582-5d89a973506e"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}AddProject",
+									"host": [
+										"{{host}}AddProject"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Open project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"    //the code automaticaly reads the projects to update the dropdpwn, hence the 200 code\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the open project page\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    pm.expect(responseText).to.include(\"Project Information\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Check project info\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"test project\");\r",
+											"    pm.expect(responseText).to.include(\"2025-11-10\");\r",
+											"    pm.expect(responseText).to.include(\"2025-12-10\");\r",
+											"    pm.expect(responseText).to.include(\"Validate if creating a projectr is possible\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-6faa49f6-377b-4dc6-964d-18eb73d9e29a",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{host}}OpenProject/{{new_project_id}}",
+									"host": [
+										"{{host}}OpenProject"
+									],
+									"path": [
+										"{{new_project_id}}"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Check project list",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"    //the code automaticaly reads the projects to update the dropdpwn, hence the 200 code\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected project management\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    pm.expect(responseText).to.include(\"Project Management System\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"let projectNameCounter = 0;\r",
+											"//list all the project names\r",
+											"$('tr td:nth-child(2) a').each((index, element) => {\r",
+											"    const projectName = $(element).text().trim();\r",
+											"    if (projectName == \"test project\") projectNameCounter++;\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Project was only created once\", () => {\r",
+											"    \r",
+											"    pm.expect(projectNameCounter).to.equal(1);\r",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-2179af21-2796-4e99-9dda-f5a657a8ef37",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{host}}Projects",
+									"host": [
+										"{{host}}Projects"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "SelectProject",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d43a5410-dd49-4a86-ae1f-186e1a765cb8",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "369e4137-8cf0-43c1-829a-62ebe5d8cf57",
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-24d8e16f-8f26-4019-8dee-7577849ee236",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"project_id\": {{new_project_id}}\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}SelectProject",
+									"host": [
+										"{{host}}SelectProject"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"    //the code automaticaly reads the projects to update the dropdpwn, hence the 200 code\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the project page\", ()=>{\r",
+											"    let responseText = pm.response.text().toLowerCase()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"project management system\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"let projectDeleted = true;\r",
+											"$('select#project-selector-form option').each((index, element) => {\r",
+											"    const projectName = $(element).text().trim();\r",
+											"\r",
+											"    if (projectName=='test project'){\r",
+											"        projectDeleted = false; \r",
+											"        return false;\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Verification: if the project was deleted\", () => {\r",
+											"    pm.expect(projectDeleted).to.equal(true);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-4fb06299-043a-4536-b21e-733632cd119e",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "id",
+											"value": "{{new_project_id}}",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "action",
+											"value": "deletion",
+											"type": "text",
+											"uuid": "53eab198-b9bb-46a1-9d49-3b2ad21ea97a"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}Projects",
+									"host": [
+										"{{host}}Projects"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"id": "11719085-b8d00659-40bc-406f-8828-31640783e822"
+				}
+			],
+			"id": "11719085-cc62dc3f-1ba3-4dbb-83f1-866c9dbeb665"
+		},
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "New user logged in",
+					"item": [
+						{
+							"name": "Create user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the users page\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"User Management System\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"const test_username = pm.environment.get(\"test_username\");\r",
+											"const test_email= pm.environment.get(\"test_email\");\r",
+											"let UserFound = false;\r",
+											"$('table.table-hover tbody tr').each((index, row) => {\r",
+											"    \r",
+											"    \r",
+											"    const columns = $(row).find('td');\r",
+											"\r",
+											"    const username = $(columns[0]).text();\r",
+											"    const email = $(columns[1]).text();\r",
+											"    \r",
+											"\r",
+											"    if(username == test_username && email == test_email) {\r",
+											"        const userId = $(columns[2]).find('input[name=\"id\"]').attr('value');\r",
+											"        pm.environment.set(\"test_user_id\", userId);\r",
+											"        UserFound = true;\r",
+											"    }\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validates if the user is in the user list\", () => {\r",
+											"    pm.expect(UserFound).to.equal(true);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-406fa988-1188-490b-acba-e2135303a9fa",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{test_username}}",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "password",
+											"value": "{{admin_password}}",
+											"type": "text",
+											"uuid": "53eab198-b9bb-46a1-9d49-3b2ad21ea97a"
+										},
+										{
+											"key": "email",
+											"value": "{{test_email}}",
+											"type": "text",
+											"uuid": "4cc85651-21a1-4a8e-95f6-daa172742cd6"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}AddUserFromManager",
+									"host": [
+										"{{host}}AddUserFromManager"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Got to User management",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the users page\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"User Management System\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"const test_username = pm.environment.get(\"test_username\");\r",
+											"const test_email= pm.environment.get(\"test_email\");\r",
+											"let UserFound = false;\r",
+											"$('table.table-hover tbody tr').each((index, row) => {\r",
+											"    \r",
+											"    \r",
+											"    const columns = $(row).find('td');\r",
+											"\r",
+											"    const username = $(columns[0]).text();\r",
+											"    const email = $(columns[1]).text();\r",
+											"    \r",
+											"    \r",
+											"    if(username == test_username && email == test_email) {\r",
+											"        UserFound = true;\r",
+											"    }\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validates if the user is in the user list\", () => {\r",
+											"    pm.expect(UserFound).to.equal(true);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-4998b678-ecb9-4776-85e1-d8a3f0c66f33",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": []
+								},
+								"url": {
+									"raw": "{{host}}UsersManagement",
+									"host": [
+										"{{host}}UsersManagement"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "logout",
+							"id": "11719085-f5b27866-6bbb-40dd-b6e6-834a7a639169",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}logout",
+									"host": [
+										"{{host}}logout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "login as new user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "009f278f-be69-4882-8926-b09215664231",
+										"exec": [
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Admin successufully logged in\", ()=>{\r",
+											"    let responseText = pm.response.text().toLowerCase()\r",
+											"    pm.expect(responseText).\r",
+											"        to.include(\"welcome, \" + pm.environment.get(\"test_username\") + \"!\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"navbar items\", ()=>{\r",
+											"    pm.expect(pm.response.text()).to.include(\"/Projects\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"/UsersManagement\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"/logout\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"/TestSpecification\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-16b4c35c-13b7-4838-9531-d28719131952",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{test_username}}",
+											"type": "text",
+											"uuid": "84511e65-667c-4fab-9eb4-0b47136b5fa9"
+										},
+										{
+											"key": "password",
+											"value": "{{admin_password}}",
+											"type": "text",
+											"uuid": "6bde7e42-66a5-43ba-add9-e17ca1e5b052"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}login",
+									"host": [
+										"{{host}}login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "logout II",
+							"id": "11719085-e0b9f5e1-fcf7-41f3-a193-55ba46de711e",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}logout",
+									"host": [
+										"{{host}}logout"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "login as admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "009f278f-be69-4882-8926-b09215664231",
+										"exec": [
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Admin successufully logged in\", ()=>{\r",
+											"    let responseText = pm.response.text().toLowerCase()\r",
+											"    pm.expect(responseText).\r",
+											"        to.include(\"welcome, \" + pm.environment.get(\"admin_user\").toLowerCase() + \"!\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"navbar items\", ()=>{\r",
+											"    pm.expect(pm.response.text()).to.include(\"/Projects\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"/UsersManagement\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"/logout\");\r",
+											"    pm.expect(pm.response.text()).to.include(\"/TestSpecification\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-355ae71c-dcc1-45a7-9008-008da60b3715",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{admin_user}}",
+											"type": "text",
+											"uuid": "84511e65-667c-4fab-9eb4-0b47136b5fa9"
+										},
+										{
+											"key": "password",
+											"value": "{{admin_password}}",
+											"type": "text",
+											"uuid": "6bde7e42-66a5-43ba-add9-e17ca1e5b052"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}login",
+									"host": [
+										"{{host}}login"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"    //the code automaticaly reads the projects to update the dropdpwn, hence the 200 code\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the users page\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"User Management System\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"const test_username = pm.environment.get(\"test_username\");\r",
+											"const test_email= pm.environment.get(\"test_email\");\r",
+											"let UserFound = false;\r",
+											"$('table.table-hover tbody tr').each((index, row) => {\r",
+											"    \r",
+											"    \r",
+											"    const columns = $(row).find('td');\r",
+											"\r",
+											"    const username = $(columns[0]).text();\r",
+											"    const email = $(columns[1]).text();\r",
+											"    \r",
+											"\r",
+											"    if(username == test_username && email == test_email) {\r",
+											"        console.log(username);\r",
+											"        console.log(email);\r",
+											"        UserFound = true;\r",
+											"    }\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validates if the user is not in the user list\", () => {\r",
+											"    pm.expect(UserFound).to.equal(false);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-8e55d935-e9f3-4b49-8936-4defe119486c",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "action",
+											"value": "deletion",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "id",
+											"value": "{{test_user_id}}",
+											"type": "text",
+											"uuid": "53eab198-b9bb-46a1-9d49-3b2ad21ea97a"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}UsersManagement",
+									"host": [
+										"{{host}}UsersManagement"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"id": "11719085-e3a92287-aa61-43a7-ad14-a1f223c6355b"
+				},
+				{
+					"name": "Change user level",
+					"item": [
+						{
+							"name": "Create user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the users page\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"User Management System\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"const test_username = pm.environment.get(\"test_username\");\r",
+											"const test_email= pm.environment.get(\"test_email\");\r",
+											"let UserFound = false;\r",
+											"$('table.table-hover tbody tr').each((index, row) => {\r",
+											"    \r",
+											"    \r",
+											"    const columns = $(row).find('td');\r",
+											"\r",
+											"    const username = $(columns[0]).text();\r",
+											"    const email = $(columns[1]).text();\r",
+											"    \r",
+											"\r",
+											"    if(username == test_username && email == test_email) {\r",
+											"        UserFound = true;\r",
+											"        const userId = $(columns[2]).find('input[name=\"id\"]').attr('value');\r",
+											"        pm.environment.set(\"test_user_id\", userId);\r",
+											"    }\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validates if the user is in the user list\", () => {\r",
+											"    pm.expect(UserFound).to.equal(true);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-34c23a06-1505-46a1-b233-1b1e87a309f9",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "{{test_username}}",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "password",
+											"value": "{{admin_password}}",
+											"type": "text",
+											"uuid": "53eab198-b9bb-46a1-9d49-3b2ad21ea97a"
+										},
+										{
+											"key": "email",
+											"value": "{{test_email}}",
+											"type": "text",
+											"uuid": "4cc85651-21a1-4a8e-95f6-daa172742cd6"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}AddUserFromManager",
+									"host": [
+										"{{host}}AddUserFromManager"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change user level to editor",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the users page\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"User Management System\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"const test_username = pm.environment.get(\"test_username\");\r",
+											"const test_email= pm.environment.get(\"test_email\");\r",
+											"let level = \"\";\r",
+											"$('table.table-hover tbody tr').each((index, row) => {\r",
+											"    \r",
+											"    const columns = $(row).find('td');\r",
+											"    const username = $(columns[0]).text();\r",
+											"    const email = $(columns[1]).text();\r",
+											"    \r",
+											"\r",
+											"    if(username == test_username && email == test_email) {\r",
+											"        const dropdown = $(columns[2]).find(\"select[name=new_level]\")\r",
+											"        level = $(dropdown).find(\"option[selected]\").attr(\"value\")\r",
+											"\r",
+											"    }\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validates if the user has the correct level\", () => {\r",
+											"    pm.expect(level).to.equal(\"editor\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-7165ca4a-ca32-4a39-8533-8aedafe5d03c",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "action",
+											"value": "change_level",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "id",
+											"value": "{{test_user_id}}",
+											"type": "text",
+											"uuid": "4e2a2611-1b40-460b-a3d9-02c5d325e0f5"
+										},
+										{
+											"key": "new_level",
+											"value": "editor",
+											"type": "text",
+											"uuid": "b880ebe4-4665-46d8-9170-f3a093da83ab"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}UsersManagement",
+									"host": [
+										"{{host}}UsersManagement"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change user level to admin",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the users page\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"User Management System\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"const test_username = pm.environment.get(\"test_username\");\r",
+											"const test_email= pm.environment.get(\"test_email\");\r",
+											"let level = \"\";\r",
+											"$('table.table-hover tbody tr').each((index, row) => {\r",
+											"    \r",
+											"    const columns = $(row).find('td');\r",
+											"    const username = $(columns[0]).text();\r",
+											"    const email = $(columns[1]).text();\r",
+											"    \r",
+											"\r",
+											"    if(username == test_username && email == test_email) {\r",
+											"        const dropdown = $(columns[2]).find(\"select[name=new_level]\")\r",
+											"        level = $(dropdown).find(\"option[selected]\").attr(\"value\")\r",
+											"\r",
+											"    }\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validates if the user has the correct level\", () => {\r",
+											"    pm.expect(level).to.equal(\"admin\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-c84ba850-e94d-4d18-b09c-b99b53fa3da6",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "action",
+											"value": "change_level",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "id",
+											"value": "{{test_user_id}}",
+											"type": "text",
+											"uuid": "4e2a2611-1b40-460b-a3d9-02c5d325e0f5"
+										},
+										{
+											"key": "new_level",
+											"value": "admin",
+											"type": "text",
+											"uuid": "b880ebe4-4665-46d8-9170-f3a093da83ab"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}UsersManagement",
+									"host": [
+										"{{host}}UsersManagement"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Change user level to viewer",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the users page\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"User Management System\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"const test_username = pm.environment.get(\"test_username\");\r",
+											"const test_email= pm.environment.get(\"test_email\");\r",
+											"let level = \"\";\r",
+											"$('table.table-hover tbody tr').each((index, row) => {\r",
+											"    \r",
+											"    const columns = $(row).find('td');\r",
+											"    const username = $(columns[0]).text();\r",
+											"    const email = $(columns[1]).text();\r",
+											"    \r",
+											"\r",
+											"    if(username == test_username && email == test_email) {\r",
+											"        const dropdown = $(columns[2]).find(\"select[name=new_level]\")\r",
+											"        level = $(dropdown).find(\"option[selected]\").attr(\"value\")\r",
+											"\r",
+											"    }\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validates if the user has the correct level\", () => {\r",
+											"    pm.expect(level).to.equal(\"viewer\");\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-8eea0b3b-26d9-4832-8857-9dacdfb0faec",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "action",
+											"value": "change_level",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "id",
+											"value": "{{test_user_id}}",
+											"type": "text",
+											"uuid": "4e2a2611-1b40-460b-a3d9-02c5d325e0f5"
+										},
+										{
+											"key": "new_level",
+											"value": "viewer",
+											"type": "text",
+											"uuid": "b880ebe4-4665-46d8-9170-f3a093da83ab"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}UsersManagement",
+									"host": [
+										"{{host}}UsersManagement"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete user",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"    //the code automaticaly reads the projects to update the dropdpwn, hence the 200 code\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the users page\", ()=>{\r",
+											"    let responseText = pm.response.text()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"User Management System\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"const test_username = pm.environment.get(\"test_username\");\r",
+											"const test_email= pm.environment.get(\"test_email\");\r",
+											"let UserFound = false;\r",
+											"$('table.table-hover tbody tr').each((index, row) => {\r",
+											"    \r",
+											"    \r",
+											"    const columns = $(row).find('td');\r",
+											"\r",
+											"    const username = $(columns[0]).text();\r",
+											"    const email = $(columns[1]).text();\r",
+											"    \r",
+											"\r",
+											"    if(username == test_username && email == test_email) {\r",
+											"        console.log(username);\r",
+											"        console.log(email);\r",
+											"        UserFound = true;\r",
+											"    }\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Validates if the user is not in the user list\", () => {\r",
+											"    pm.expect(UserFound).to.equal(false);\r",
+											"});\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-990d7a45-d1d9-40a6-99ab-ae3726c826eb",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "action",
+											"value": "deletion",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "id",
+											"value": "{{test_user_id}}",
+											"type": "text",
+											"uuid": "53eab198-b9bb-46a1-9d49-3b2ad21ea97a"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}UsersManagement",
+									"host": [
+										"{{host}}UsersManagement"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"id": "11719085-678ab56c-8b5f-406f-81b0-631fca310118"
+				}
+			],
+			"id": "11719085-0a9aa34a-68a4-4982-8e50-478e5b2c6b31"
+		},
+		{
+			"name": "Test specification",
+			"item": [
+				{
+					"name": "Precondition",
+					"item": [
+						{
+							"name": "Create project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the projects page\", ()=>{\r",
+											"    let responseText = pm.response.text().toLowerCase()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"project management system\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"let testProjectFound = false;\r",
+											"$('select#project-selector-form option').each((index, element) => {\r",
+											"    \r",
+											"    const projectId = $(element).attr('value');\r",
+											"    const selected = $(element).attr('selected');\r",
+											"    const projectName = $(element).text().trim();\r",
+											"\r",
+											"    if (projectName=='test project'){\r",
+											"        testProjectFound = true; \r",
+											"\r",
+											"        pm.environment.set(\"new_project_id\", projectId);\r",
+											"\r",
+											"        pm.test(\"New project must be selected in the dropdown list\", ()=>{\r",
+											"            pm.expect(selected).to.equal(\"selected\");\r",
+											"        })\r",
+											"\r",
+											"        return false;\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Verification: new test option was found in the HTML\", () => {\r",
+											"    pm.expect(testProjectFound).to.equal(true);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-159e8f2d-9b86-4f34-a5fe-f0d2a7343b25",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "project_name",
+											"value": "test project",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "start_date",
+											"value": "2025-11-10",
+											"type": "text",
+											"uuid": "53eab198-b9bb-46a1-9d49-3b2ad21ea97a"
+										},
+										{
+											"key": "end_date",
+											"value": "2025-12-10",
+											"type": "text",
+											"uuid": "4cc85651-21a1-4a8e-95f6-daa172742cd6"
+										},
+										{
+											"key": "description",
+											"value": "Validate if creating a projectr is possible",
+											"type": "text",
+											"uuid": "72ced28d-26ab-47df-a582-5d89a973506e"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}AddProject",
+									"host": [
+										"{{host}}AddProject"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "SelectProject",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "d43a5410-dd49-4a86-ae1f-186e1a765cb8",
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "369e4137-8cf0-43c1-829a-62ebe5d8cf57",
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-465dedcf-0e6c-48ab-919b-b61b3e46caee",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"project_id\": {{new_project_id}}\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}SelectProject",
+									"host": [
+										"{{host}}SelectProject"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"id": "11719085-2c6ec3b4-de33-4980-9a4b-2a9e163d66e7"
+				},
+				{
+					"name": "createTest",
+					"item": [
+						{
+							"name": "tree root",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e1ddb010-fb80-4a5d-bea2-4830622cd904",
+										"exec": [
+											"const ajv = require('ajv')\r",
+											"\r",
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"const schema = {\r",
+											"    \"type\": \"object\",\r",
+											"    \"properties\": {\r",
+											"        \"children\": { \"type\": \"boolean\" },\r",
+											"        \"id\": { \"type\": \"integer\" },\r",
+											"        \"text\": { \"type\": \"string\" },\r",
+											"        \"type\": { \"type\": \"string\" }\r",
+											"    },\r",
+											"    \"required\": [\"children\", \"id\", \"text\", \"type\"],\r",
+											"        \"additionalProperties\": false\r",
+											"};\r",
+											"\r",
+											"const arraySchema = {\r",
+											"    \"type\": \"array\",\r",
+											"    \"items\": schema,\r",
+											"    \"minItems\": 1,\r",
+											"    \"maxItems\": 1\r",
+											"};\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response should match the defined JSON schema\", () => {\r",
+											"    pm.response.to.have.jsonSchema(arraySchema);\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"The project should have the correct name\", ()=>{\r",
+											"    pm.expect(pm.response.json()[0][\"text\"]).to.equal(\"test project\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"The project should have the correct type\", ()=>{\r",
+											"    pm.expect(pm.response.json()[0][\"type\"]).to.equal(\"suite\");\r",
+											"});\r",
+											"\r",
+											"pm.environment.set(\"root_id\", pm.response.json()[0][\"id\"]);"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-d1595166-a95c-4261-8c01-4fb40ea836f5",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "noauth"
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{host}}get_test_tree_root",
+									"host": [
+										"{{host}}get_test_tree_root"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateSuite",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "708c245c-8ffb-4b10-9995-49efe0168a21",
+										"exec": [
+											"\r",
+											"pm.test(\"Status code is 201\", ()=>{\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.environment.set(\"new_suite_id\", pm.response.json()[\"id\"]);\r",
+											"\r",
+											"const schema = {\r",
+											"    \"type\": \"object\",\r",
+											"    \"properties\": {\r",
+											"        \"id\": { \"type\": \"integer\" },\r",
+											"        \"message\": { \"type\": \"string\" },\r",
+											"        \"name\": { \"type\": \"string\" },\r",
+											"        \"success\": { \"type\": \"boolean\" }\r",
+											"    },\r",
+											"    \"required\": [\"id\", \"message\", \"name\", \"success\"],\r",
+											"    \"additionalProperties\": false\r",
+											"};\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response should match the defined JSON schema\", () => {\r",
+											"        pm.response.to.have.jsonSchema(schema);\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"The project should have the correct name\", ()=>{\r",
+											"    pm.expect(pm.response.json()[\"name\"]).to.equal(\"test suite\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"The project should have the right message\", ()=>{\r",
+											"    pm.expect(pm.response.json()[\"message\"]).to.equal(\"suite added.\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-c940dffc-d678-4965-bb37-0a16e2a76fcd",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test suite\",\r\n    \"parent_id\": {{root_id}},\r\n    \"description\": \"test description\"\r\n}\r\n\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}add_suite",
+									"host": [
+										"{{host}}add_suite"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateTestcase",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "708c245c-8ffb-4b10-9995-49efe0168a21",
+										"exec": [
+											"\r",
+											"pm.test(\"Status code is 201\", ()=>{\r",
+											"    pm.response.to.have.status(201);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.environment.set(\"new_test_case_id\", pm.response.json()[\"id\"]);\r",
+											"\r",
+											"const schema = {\r",
+											"    \"type\": \"object\",\r",
+											"    \"properties\": {\r",
+											"        \"id\": { \"type\": \"integer\" },\r",
+											"        \"message\": { \"type\": \"string\" },\r",
+											"        \"name\": { \"type\": \"string\" },\r",
+											"        \"success\": { \"type\": \"boolean\" }\r",
+											"    },\r",
+											"    \"required\": [\"id\", \"message\", \"name\", \"success\"],\r",
+											"    \"additionalProperties\": false\r",
+											"};\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response should match the defined JSON schema\", () => {\r",
+											"        pm.response.to.have.jsonSchema(schema);\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"The project should have the correct name\", ()=>{\r",
+											"    pm.expect(pm.response.json()[\"name\"]).to.equal(\"test test case\");\r",
+											"});\r",
+											"\r",
+											"pm.test(\"The project should have the right message\", ()=>{\r",
+											"    pm.expect(pm.response.json()[\"message\"]).to.equal(\"Test case added sucessfuly\");\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-d768a6de-9c54-4d49-97ef-61dc5be3e051",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"name\": \"test test case\",\r\n    \"parent_id\": {{new_suite_id}},\r\n    \"description\": \"test description\",\r\n    \"status\": \"draft\",\r\n    \"priority\": \"low\"\r\n}\r\n\r\n",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}add_test_case",
+									"host": [
+										"{{host}}add_test_case"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "tree children",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "e0bb8f53-16d9-4d0e-b77b-4deb32c4e6cc",
+										"exec": [
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"const schema = {\r",
+											"    \"type\": \"object\",\r",
+											"    \"properties\": {\r",
+											"        \"children\": { \"type\": \"boolean\" },\r",
+											"        \"id\": { \"type\": \"string\" },\r",
+											"        \"text\": { \"type\": \"string\" },\r",
+											"        \"type\": { \"type\": \"string\" }\r",
+											"    },\r",
+											"    \"required\": [\"children\", \"id\", \"text\", \"type\"],\r",
+											"    \"additionalProperties\": false\r",
+											"};\r",
+											"\r",
+											"const arraySchema = {\r",
+											"    \"type\": \"array\",\r",
+											"    \"items\": schema,\r",
+											"};\r",
+											"\r",
+											"pm.test(\"Response should match the defined JSON schema\", () => {\r",
+											"        pm.response.to.have.jsonSchema(arraySchema);\r",
+											"\r",
+											"});\r",
+											"\r",
+											"const testID = pm.environment.get(\"new_test_case_id\");\r",
+											"\r",
+											"pm.response.json().each((test)=>{\r",
+											"    if(test.id == (\"c_\" + testID)){\r",
+											"        pm.test(\"The test case must have the right type\", ()=>{\r",
+											"            pm.expect(test.type).to.equal(\"test\");\r",
+											"        });\r",
+											"\r",
+											"        pm.test(\"The name of the test must formatted correctly\", ()=>{\r",
+											"            pm.expect(test.text).to.equal(testID+\":\"+\"test test case\");\r",
+											"        });\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-1a1edf41-6fce-42a2-af93-07080e26a840",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"auth": {
+									"type": "apikey",
+									"apikey": [
+										{
+											"key": "in",
+											"value": "header",
+											"type": "string"
+										},
+										{
+											"key": "key",
+											"value": "x-api-key",
+											"type": "string"
+										},
+										{
+											"key": "value",
+											"value": "reqres-free-v1",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "username",
+											"value": "test",
+											"type": "text",
+											"uuid": "19e8eacf-082d-4c5c-b297-453a5964028c"
+										},
+										{
+											"key": "password",
+											"value": "password",
+											"type": "text",
+											"uuid": "764e3acc-6f25-4688-8eea-63c780619458"
+										},
+										{
+											"key": "email",
+											"value": "test@email",
+											"type": "text",
+											"uuid": "81885ba1-b0ce-49a4-bdaf-d88b08e7cda7"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}get_test_tree_children?id={{new_suite_id}}",
+									"host": [
+										"{{host}}get_test_tree_children"
+									],
+									"query": [
+										{
+											"key": "id",
+											"value": "{{new_suite_id}}"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Test",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "708c245c-8ffb-4b10-9995-49efe0168a21",
+										"exec": [
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"let tesID = pm.environment.get(\"new_test_case_id\");\r",
+											"tesID = tesID.substr(3, tesID.length -3 -1)\r",
+											"pm.environment.set(\"new_test_case_id\", tesID);\r",
+											"\r",
+											"const schema = {\r",
+											"    \"type\": \"object\",\r",
+											"    \"properties\": {\r",
+											"        \"message\": { \"type\": \"string\" },\r",
+											"        \"success\": { \"type\": \"boolean\" }\r",
+											"    },\r",
+											"    \"required\": [\"message\", \"success\"],\r",
+											"    \"additionalProperties\": false\r",
+											"};\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response should match the defined JSON schema\", () => {\r",
+											"        pm.response.to.have.jsonSchema(schema);\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"The project should have the correct message\", ()=>{\r",
+											"\r",
+											"    pm.expect(pm.response.json()[\"message\"]).to.equal(\"Test case \" + tesID + \" deleted successfuly. \");\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7745cb31-3607-4d8c-b951-372c52b23718",
+										"exec": [
+											"const tesID = pm.environment.get(\"new_test_case_id\");\r",
+											"\r",
+											"pm.environment.set(\"new_test_case_id\", '\\\"c_' +tesID + '\\\"');"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-f3a86b12-17b9-499f-8b00-6a4fbdcd39db",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": {{new_test_case_id}},\r\n    \"type\": \"test\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}delete_node",
+									"host": [
+										"{{host}}delete_node"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Delete Suite",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "708c245c-8ffb-4b10-9995-49efe0168a21",
+										"exec": [
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"let suiteID = pm.environment.get(\"new_suite_id\");\r",
+											"\r",
+											"const schema = {\r",
+											"    \"type\": \"object\",\r",
+											"    \"properties\": {\r",
+											"        \"message\": { \"type\": \"string\" },\r",
+											"        \"success\": { \"type\": \"boolean\" }\r",
+											"    },\r",
+											"    \"required\": [\"message\", \"success\"],\r",
+											"    \"additionalProperties\": false\r",
+											"};\r",
+											"\r",
+											"\r",
+											"pm.test(\"Response should match the defined JSON schema\", () => {\r",
+											"        pm.response.to.have.jsonSchema(schema);\r",
+											"\r",
+											"});\r",
+											"\r",
+											"pm.test(\"The project should have the correct message\", ()=>{\r",
+											"\r",
+											"    pm.expect(pm.response.json()[\"message\"]).to.equal(\"suite \" + suiteID + \" deleted successfuly\");\r",
+											"});\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"id": "7745cb31-3607-4d8c-b951-372c52b23718",
+										"exec": [
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-26f86a8c-8b22-4514-8381-5d5a5b995e5b",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"id\": {{new_suite_id}},\r\n    \"type\": \"suite\"\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{host}}delete_node",
+									"host": [
+										"{{host}}delete_node"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"id": "11719085-886395e1-7ef5-4e32-8c04-d305590e65e9"
+				},
+				{
+					"name": "posconditions",
+					"item": [
+						{
+							"name": "Delete project",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "fc601d2d-ec29-48b1-bb76-e55fdfe9b5cf",
+										"exec": [
+											"const $ = require('cheerio').load(pm.response.text());\r",
+											"\r",
+											"pm.test(\"Status code is 200\", ()=>{\r",
+											"    pm.response.to.have.status(200);\r",
+											"\r",
+											"    //the code automaticaly reads the projects to update the dropdpwn, hence the 200 code\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Redirected to the project page\", ()=>{\r",
+											"    let responseText = pm.response.text().toLowerCase()\r",
+											"    \r",
+											"    pm.expect(responseText).to.include(\"project management system\");\r",
+											"\r",
+											"});\r",
+											"\r",
+											"\r",
+											"let projectDeleted = true;\r",
+											"$('select#project-selector-form option').each((index, element) => {\r",
+											"    const projectName = $(element).text().trim();\r",
+											"\r",
+											"    if (projectName=='test project'){\r",
+											"        projectDeleted = false; \r",
+											"        return false;\r",
+											"    }\r",
+											"});\r",
+											"\r",
+											"\r",
+											"pm.test(\"Verification: if the project was deleted\", () => {\r",
+											"    pm.expect(projectDeleted).to.equal(true);\r",
+											"});\r",
+											"\r",
+											"\r",
+											"\r",
+											"\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"id": "11719085-1c329a0f-4f11-4de4-b094-38f771d1aea1",
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "id",
+											"value": "{{new_project_id}}",
+											"type": "text",
+											"uuid": "b7410f07-a52b-4bd8-b455-b557886a2d9a"
+										},
+										{
+											"key": "action",
+											"value": "deletion",
+											"type": "text",
+											"uuid": "53eab198-b9bb-46a1-9d49-3b2ad21ea97a"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{host}}Projects",
+									"host": [
+										"{{host}}Projects"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"id": "11719085-deecdf97-1df0-4159-a2bb-b1b3a2f2774a"
+				}
+			],
+			"id": "11719085-5c50e103-e408-4e5e-be7d-33e2355da4f8"
+		},
+		{
+			"name": "posconditions",
+			"item": [
+				{
+					"name": "logout",
+					"id": "11719085-e3a1cc03-05d1-42d3-91fb-4c8a5e025a69",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{host}}logout",
+							"host": [
+								"{{host}}logout"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"id": "11719085-d01f9932-4488-4697-a364-fdade40bea03"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "cad2991a-bd61-4d0f-901c-23a82bf0406c",
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "3c8a7269-5390-45c2-b062-6dc6214dd176",
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
